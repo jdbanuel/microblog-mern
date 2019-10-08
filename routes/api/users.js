@@ -15,6 +15,9 @@ router.post(
 			.not()
 			.isEmpty(),
 		check('email', 'Please enter a valid email.').isEmail(),
+		check('username', 'Username is required.')
+			.not()
+			.isEmpty(),
 		check(
 			'password',
 			'Please enter a password with 6 or more characters.'
@@ -31,7 +34,7 @@ router.post(
 		}
 
 		//Destructuring req.body
-		const { name, email, password } = req.body;
+		const { name, email, username, password } = req.body;
 
 		try {
 			//Checking to see if user exists
@@ -40,7 +43,11 @@ router.post(
 				email
 			});
 
-			if (user) {
+			let usernameExists = await User.findOne({
+				username
+			});
+
+			if (user || usernameExists) {
 				return res.status(400).json({
 					errors: [
 						{
@@ -61,6 +68,7 @@ router.post(
 				name,
 				email,
 				password,
+				username,
 				profileImg
 			});
 
