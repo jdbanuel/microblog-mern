@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/authentication.js');
+const { check, validationResult } = require('express-validator');
 
 const Profile = require('../../models/Profile.model.js');
 const User = require('../../models/User.model.js');
@@ -22,6 +23,52 @@ router.get('/me', auth, async (req, res) => {
 		res.json(profile);
 	} catch (error) {
 		console.error(errror.message);
+		res.status(500).send('Server Error');
+	}
+});
+
+//@route POST /api/profile/
+//@desc Create or update a users profile
+//@access Private
+
+router.post('/', auth, async (req, res) => {
+	const { website, bio, social } = req.body;
+
+	try {
+		const profile = new Profile({
+			user: req.body.id,
+			website,
+			bio,
+			social
+		});
+
+		await profile.save();
+		res.status(200).json(profile);
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send('Server Error');
+	}
+});
+
+//@route put /api/profile/:id
+//@desc  Update a users profile
+//@access Private
+//Todo update route
+router.post('/:id', auth, async (req, res) => {
+	const { website, bio, social } = req.body;
+
+	try {
+		const profile = new Profile({
+			user: req.body.id,
+			website,
+			bio,
+			social
+		});
+
+		await profile.save();
+		res.status(200).json(profile);
+	} catch (error) {
+		console.error(error.message);
 		res.status(500).send('Server Error');
 	}
 });
